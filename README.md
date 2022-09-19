@@ -1,5 +1,5 @@
 # ShowCaseShop
-This example shows how you can greatly improve the perceived performance event if you have a very slow api behind. The API behind this example delayes every request by 2 seconds. 
+This example shows how you can greatly improve the perceived performance even if you have a very slow API. The API behind this example delayes every request by 2 seconds however navigating feels almost instant. 
 
 ## Install 
 `npm install`
