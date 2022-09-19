@@ -1,27 +1,20 @@
 # ShowCaseShop
+This example shows how you can greatly improve the perceived performance event if you have a very slow api behind. The API behind this example delayes every request by 2 seconds. 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.0.
+## Install 
+`npm install`
 
-## Development server
+## Run
+start mock api with `npm run mock` and frontend with `npm run start`  
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## What it does 
+While rendering a link component it pushes a preload command for this url into queue. After as soon as the application has nothing to do it starts preloading content this urls and stores the results. So in theory the enrty page is preloaded by ssr and all other page by this system.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Todo
+- add flags for preloading and priority to the link component
+- preload only links in the viewport
+- maybe add a expire time for the stored content
+- look for images in the loaded content and preload them as well
+- abuse the angular universal express server as a middleware to bundle requests for every page
