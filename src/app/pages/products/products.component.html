@@ -1,0 +1,27 @@
+<h1>Products</h1>
+<pre *ngIf="data$ | async as data">
+    {{ data | json }}
+</pre>
+
+<pre>hardData: {{ hardData }}</pre>
+
+<ng-container *ngIf="data$ | async as data; else loading">
+    <pre> {{ data | json }}</pre>
+    <div class="container">
+        <div class="product-list">
+            <div *ngFor="let product of data" class="product-tile">
+                <div class="product-tile-container">
+                    <div class="image-wrapper">
+                        <img [src]="product.images[0]" />
+                    </div>
+                    <div class="product-name">{{product.name}}</div>
+                    <div class="product-price">{{product.price.sale}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #loading>
+    loading...
+</ng-template>
