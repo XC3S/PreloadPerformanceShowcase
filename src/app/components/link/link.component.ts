@@ -12,7 +12,7 @@ export class LinkComponent implements OnInit {
   constructor(private urlDataService: UrlDataService) {}
 
   ngOnInit(): void {
-    
+    this.preload();  
   }
 
   preload(){

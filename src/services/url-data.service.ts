@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ApplicationRef, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, filter, Observable, of, take } from 'rxjs';
+import { BehaviorSubject, filter, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +24,6 @@ export class UrlDataService {
     });
   }
 
-  
-
   // push to Queue
   public preload(url: string){
     this.PreloadQueue.push(url);
@@ -39,10 +37,7 @@ export class UrlDataService {
     }
 
     const next:string = this.PreloadQueue.shift()!;
-
     if(!this.UrlMap.has(next)) this.load(next);
-
-
     this.processPreload();
   }
 
@@ -50,19 +45,17 @@ export class UrlDataService {
     console.log("finished preload");
     console.log(this.PreloadQueue);
   }
-
   
   public get(url:string = ''): Observable<any> {
     if(!url) url = this.router.url;
-
     if (!this.UrlMap.has(url)) this.load(url);
     
+    const sub = this.UrlMap.get(url)!.asObservable().pipe(
+      tap(x => console.log('store after alt2:', x))
+    );
 
-    return this.UrlMap.get(url)!.asObservable();
+    return sub;
   }  
-
-
-
 
   private load(url:string = ''): Observable<any> {
     if(!url) url = this.router.url;
@@ -73,15 +66,9 @@ export class UrlDataService {
 
     this.http.get(`http://localhost:3000${url}`).subscribe(data => {
       const storeEntry = this.UrlMap.get(url)
-
-      console.log("store entry", url, storeEntry);
-
       storeEntry?.next(data);
-
-      console.log("store entry after", storeEntry?.value);
     });
 
-    
     return this.UrlMap.get(url)!.asObservable();
   }
 }
