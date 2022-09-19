@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ComponetModule } from 'src/app/components/componets.modules';
-import { ProductsComponent } from './products.component';
+import { ProductDetailComponent } from './product-detail.component';
 
 const impex = [
-    ProductsComponent
+  ProductDetailComponent
 ];
 
 @NgModule({
@@ -16,4 +16,4 @@ const impex = [
     ...impex
   ]
 })
-export class ProductsModule { }
+export class ProductDetailModule { }

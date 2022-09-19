@@ -8,10 +8,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeModule } from './pages/home.module';
 import { ProductsModule } from './pages/products/products.module';
 import { ComponetModule } from './components/componets.modules';
+import { ProductDetailModule } from './pages/product-detail/product-detail.module';
 
 const pageModules = [
   HomeModule,
   ProductsModule,
+  ProductDetailModule,
   ComponetModule
 ]
   

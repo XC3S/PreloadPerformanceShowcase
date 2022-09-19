@@ -1,0 +1,61 @@
+.container {
+    width: 800px;
+    margin: auto;
+}
+
+.product-list {
+    display: flex;
+    margin: 0 -30px;
+
+    .product-tile {
+        flex: 0 0 33%;
+        max-width: 33%;
+        padding: 0 30px;
+
+        .product-tile-container {
+            background-color: #dedede;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #bbb;
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+            overflow: hidden;
+            flex: 0 0 auto;
+            border-radius: 10px 10px 0 0;
+        
+            img {
+                position: absolute;
+                width: 120%;
+                height: 120%;
+                left: -10%; // hack because test images have a white border
+                top: -10%;
+
+                object-fit: cover;
+            }
+        }
+
+        .product-name {
+            padding: 15px;
+            flex: 1 1 auto;
+        }
+        .product-price {
+            padding: 0 15px 15px 15px;
+            flex: 0 0 auto;
+        }
+
+
+        
+    }
+}
+
+
+* {
+    box-sizing: border-box;
+}

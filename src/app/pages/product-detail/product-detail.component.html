@@ -1,4 +1,4 @@
-<h1>Products</h1>
+<h1>Product Detail</h1>
 
 <ng-container *ngIf="data; else loading">
     <pre> {{ data | json }}</pre>
@@ -7,9 +7,7 @@
             <div *ngFor="let product of data" class="product-tile">
                 <div class="product-tile-container">
                     <div class="image-wrapper">
-                        <app-link [href]="'/products/' + product.id">
-                            <img [src]="product.images[0]" />
-                        </app-link>
+                        <img [src]="product.images[0]" />
                     </div>
                     <div class="product-name">{{product.name}}</div>
                     <div class="product-price">{{product.price.sale}}</div>
