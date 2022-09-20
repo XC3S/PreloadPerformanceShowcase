@@ -11,7 +11,7 @@ const impex = [
   declarations: [
     ...impex,
   ],
-  imports: [CommonModule, ComponetModule],
+  imports: [CommonModule],
   exports: [
     ...impex
   ]

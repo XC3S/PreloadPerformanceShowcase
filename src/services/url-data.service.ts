@@ -1,32 +1,55 @@
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ApplicationRef, Injectable } from '@angular/core';
+import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { makeStateKey, TransferState } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, filter, Observable, tap } from 'rxjs';
+
+const UrlMap = new Map<string, BehaviorSubject<any>>();
+
+//let instance: UrlDataService;
+const STATE_KEY_ITEMS = makeStateKey('items');
 
 @Injectable({
   providedIn: 'root'
 })
 export class UrlDataService {
+  public PreloadQueue: string[] = [];
 
-  private UrlMap = new Map<string, BehaviorSubject<any>>();
-  private PreloadQueue: string[] = [];
+  public serializedUrlMap: string = 'empty';
+
+  public static instance:UrlDataService;
+
   
-  constructor(private http: HttpClient, private appRef: ApplicationRef, private router: Router) { 
-    
-
-    router.events.pipe(filter( e => e instanceof NavigationEnd)).subscribe((e) => {
-      this.appRef.isStable.pipe(
-        filter(stable => !!stable),
-        //take(1) // only one peer page?
-      ).subscribe(() => {
-        this.processPreload();
-      })
-    });
+  constructor(
+    private http: HttpClient, 
+    private appRef: ApplicationRef, 
+    private router: Router,
+    private transferState: TransferState,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { 
+    // client
+    if(isPlatformBrowser(this.platformId)){
+      this.hydrateClient()
+      
+      router.events.pipe(filter( e => e instanceof NavigationEnd)).subscribe((e) => {
+        this.appRef.isStable.pipe(
+          filter(stable => !!stable),
+          //take(1) // only one peer page?
+        ).subscribe(() => {
+          this.processPreload();
+        })
+      });
+    }
   }
 
   // push to Queue
   public preload(url: string){
     this.PreloadQueue.push(url);
+
+    if(isPlatformServer(this.platformId)){
+      this.processPreload();
+    }
   }
 
   // pop first in Queue
@@ -37,38 +60,62 @@ export class UrlDataService {
     }
 
     const next:string = this.PreloadQueue.shift()!;
-    if(!this.UrlMap.has(next)) this.load(next);
+    if(!UrlMap.has(next)) this.load(next);
     this.processPreload();
   }
 
   private postPreload(){
-    console.log("finished preload");
-    console.log(this.PreloadQueue);
+   
   }
   
-  public get(url:string = ''): Observable<any> {
-    if(!url) url = this.router.url;
-    if (!this.UrlMap.has(url)) this.load(url);
+  public get(url?:string): Observable<any> {
+    if (!url) url = this.router.url;
+    if (!UrlMap.has(url) || !UrlMap.get(url)?.value) this.load(url);
     
-    const sub = this.UrlMap.get(url)!.asObservable().pipe(
-      tap(x => console.log('store after alt2:', x))
-    );
+    return UrlMap.get(url)!.asObservable()
 
-    return sub;
+      // hydrate server after a simple page load
+      .pipe(tap(() => {
+        if(isPlatformServer(this.platformId)){
+          this.hydrateServer();
+        }
+      }));
   }  
 
   private load(url:string = ''): Observable<any> {
     if(!url) url = this.router.url;
-    
-    if (!this.UrlMap.has(url)) {
-      this.UrlMap.set(url, new BehaviorSubject(null));
+
+    if (!UrlMap.has(url)) {
+      UrlMap.set(url, new BehaviorSubject(null));
     }
 
     this.http.get(`http://localhost:3000${url}`).subscribe(data => {
-      const storeEntry = this.UrlMap.get(url)
+      const storeEntry = UrlMap.get(url)
       storeEntry?.next(data);
     });
 
-    return this.UrlMap.get(url)!.asObservable();
+    return UrlMap.get(url)!.asObservable()
+  }
+
+  hydrateClient(){
+    if(isPlatformBrowser(this.platformId)){
+      const data = this.transferState.get(STATE_KEY_ITEMS, <any>'empty');
+      if(data !== 'empty') {
+        JSON.parse(data).forEach(([key, value]:[string, any]) => {
+          UrlMap.set(key, new BehaviorSubject(value));
+        });
+      }
+    }
+  }
+
+  hydrateServer(){
+    if(isPlatformServer(this.platformId)){
+      const x = Array.from(UrlMap.entries())
+          .map(([key, value]) => [key, value.value])
+          .filter(([, value]) => !!value);
+
+      this.serializedUrlMap = JSON.stringify(x);
+      this.transferState.set(STATE_KEY_ITEMS, <any>this.serializedUrlMap);
+    };
   }
 }

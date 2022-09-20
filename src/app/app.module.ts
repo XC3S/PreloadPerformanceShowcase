@@ -1,22 +1,12 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { HttpClientModule } from '@angular/common/http';
-import { HomeModule } from './pages/home.module';
-import { ProductsModule } from './pages/products/products.module';
-import { ComponetModule } from './components/componets.modules';
-import { ProductDetailModule } from './pages/product-detail/product-detail.module';
+import { PageModule } from './page.module';
 
-const pageModules = [
-  HomeModule,
-  ProductsModule,
-  ProductDetailModule,
-  ComponetModule
-]
-  
 @NgModule({
   declarations: [
     AppComponent
@@ -26,7 +16,8 @@ const pageModules = [
     AppRoutingModule,
     StoreModule.forRoot({}, {}),
     HttpClientModule,
-    ...pageModules
+    BrowserTransferStateModule,
+    PageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

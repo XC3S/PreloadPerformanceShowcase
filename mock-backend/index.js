@@ -113,12 +113,11 @@ app.get('/products/000002', (req, res) => {
       }, addedLatency)
 })
 
-
-
-
 app.get('/', (req, res) => {   
   setTimeout(() => {
-    res.send([])
+    res.send({
+      "title": "Home Page",
+    })
   }, addedLatency)
 })
 
