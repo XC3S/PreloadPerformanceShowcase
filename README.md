@@ -13,8 +13,10 @@ While rendering a link component it pushes a preload command for this url into q
 
 
 ## Todo
-- add flags for preloading and priority to the link component
-- preload only links in the viewport
-- maybe add a expire time for the stored content
-- look for images in the loaded content and preload them as well
-- abuse the angular universal express server as a middleware to bundle requests for every page
+- [x] implement ssr with state transfere
+    - [ ] currently the server transferes everything it knows, it should only transfere page relevant data
+- [ ] add flags for preloading and priority to the link component
+- [ ] preload only links in the viewport
+- [ ] maybe add a expire time for the stored content
+- [ ] look for images in the loaded content and preload them as well
+- [ ] abuse the angular universal express server as a middleware to bundle requests for every page
